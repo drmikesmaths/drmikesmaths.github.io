@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+<title>Functions 9 Quiz</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: one centred quiz card on a pale blue page, navy header band, one question at a time */
+:root{
+  --navy:#0B1259; --pale:#EAF2FB; --card:#FFFFFF; --ink:#1A2140; --muted:#5A6385;
+  --line:#C9D6EA; --good:#1E7B3A; --good-bg:#E5F4EA; --bad:#B3261E; --bad-bg:#FBE9E7;
+  --btn-fg:#FFFFFF;
+  --font:'Source Sans 3', 'Segoe UI', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --navy:#9FB4FF; --pale:#0E1330; --card:#171D3D; --ink:#E6EAF7; --muted:#A3ABC9;
+  --line:#2C3563; --good:#7FD69A; --good-bg:#16301F; --bad:#FF9C92; --bad-bg:#3A1A18;
+  --btn-fg:#0B1259; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --navy:#9FB4FF; --pale:#0E1330; --card:#171D3D; --ink:#E6EAF7; --muted:#A3ABC9;
+  --line:#2C3563; --good:#7FD69A; --good-bg:#16301F; --bad:#FF9C92; --bad-bg:#3A1A18;
+  --btn-fg:#0B1259; color-scheme:dark }
+body{ background:var(--pale); color:var(--ink); font-family:var(--font); font-size:18px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); padding-block:24px; }
+.wrap{ max-width:720px; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
+.brand{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; color:var(--navy); }
+.brand b{ font-size:20px; letter-spacing:.02em; }
+.brand span{ font-size:15px; color:var(--muted); }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:28px; display:flex; flex-direction:column; gap:18px; }
+h1{ margin:0; color:var(--navy); font-size:30px; line-height:1.2; text-wrap:balance; }
+.q-text p{ margin:0 0 10px; } .q-text p:last-child{ margin:0; }
+.q-media{ overflow-x:auto; }
+table.vt{ border-collapse:collapse; font-size:20px; font-variant-numeric:tabular-nums; margin:0 auto; }
+table.vt th, table.vt td{ border:1.5px solid var(--ink); padding:6px 14px; text-align:center; min-width:44px; }
+.scroll-hint{ display:flex; justify-content:center; align-items:center; gap:8px; font-weight:700; color:var(--navy); font-size:16px; margin-top:-8px; }
+.scroll-hint span.arr{ font-size:22px; animation:nudge 1.2s ease-in-out infinite; }
+@keyframes nudge{ 50%{ transform:translateX(6px); } }
+@media (prefers-reduced-motion: reduce){ .scroll-hint span.arr{ animation:none; } }
+@media (max-width:480px){ .card{ padding:20px 16px; } table.vt{ font-size:17px; } table.vt th, table.vt td{ padding:5px 7px; min-width:30px; } }
+table.vt th{ background:var(--pale); }
+.q-img{ display:flex; justify-content:center; } .q-img img{ background:#fff; padding:6px; border-radius:6px; max-width:100%; height:auto; }
+.answers{ display:flex; flex-direction:column; gap:10px; }
+.ans{ display:flex; align-items:center; gap:12px; padding:12px 16px; border:2px solid var(--line); border-radius:10px; cursor:pointer; }
+.ans:hover{ border-color:var(--navy); }
+.ans input{ width:20px; height:20px; accent-color:var(--navy); flex:none; }
+.ans.correct{ border-color:var(--good); background:var(--good-bg); }
+.ans.wrong{ border-color:var(--bad); background:var(--bad-bg); }
+.ans.locked{ cursor:default; }
+.dots{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.dot{ width:14px; height:14px; border-radius:50%; border:2px solid var(--navy); background:transparent; padding:0; cursor:pointer; }
+.dot.done{ background:var(--line); } .dot.now{ background:var(--navy); }
+.row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.row .spacer{ flex:1; }
+button.btn{ font:inherit; font-weight:700; font-size:16px; padding:10px 22px; border-radius:30px; border:2px solid var(--navy); background:var(--navy); color:var(--btn-fg); cursor:pointer; }
+button.btn.ghost{ background:transparent; color:var(--navy); }
+button.btn:disabled{ opacity:.4; cursor:default; }
+button:focus-visible{ outline:3px solid var(--navy); outline-offset:3px; }
+.feedback{ font-weight:700; } .feedback.good{ color:var(--good); } .feedback.bad{ color:var(--bad); }
+.score{ font-size:40px; font-weight:700; color:var(--navy); font-variant-numeric:tabular-nums; }
+.bar{ height:14px; background:var(--line); border-radius:7px; overflow:hidden; }
+.bar i{ display:block; height:100%; background:var(--navy); }
+.small{ font-size:15px; color:var(--muted); }
+mjx-container{ font-size:105% !important; }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <div class="brand"><b>Dr Mike's Maths</b><span>Grade 12 · Functions 9</span></div>
+  <main class="card" id="app" aria-live="polite"></main>
+  <p class="small">Each question has one correct answer. Choose your answer, then press <b>Check</b>.</p>
+</div>
+
+<script>
+window.MathJax = { tex:{ inlineMath:[['\\(','\\)']] }, svg:{ fontCache:'global' }, startup:{ typeset:false } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<script>
+
+const QUIZ = {"title":"Functions 9 Quiz","intro":"<p>This Quiz covers the material in Functions 9. There are 5 questions and no time limit.<\/p>","pass":80,"questions":[{"q":"<p><strong>Question 1<\/strong><\/p><p>What are the domain and range of the function \\(f(x) = 3^x\\)?<\/p>","a":["A. &nbsp;Domain: \\(x \\in R\\), &nbsp;\\(x &gt; 0\\); &nbsp;Range: \\(y \\in R\\), \\(y &lt; 0\\)","B. &nbsp;Domain: \\((- \\infty; 0]\\); &nbsp;Range: \\([0; \\infty)\\)","C. &nbsp;Domain: \\([0; \\infty)\\); &nbsp;Range: \\((- \\infty; 0]\\)","D. &nbsp;Domain: \\(x \\in R\\); &nbsp;Range: \\(y \\in R; y&gt;0\\)"],"c":3},{"q":"<p><strong>Question 2<\/strong><\/p><p>What are the domain and range of the inverse of the function \\(f(x) = 5^x\\)?<\/p>","a":["A. &nbsp;Domain: \\((-\\infty; \\infty)\\); &nbsp;Range: \\([0; \\infty)\\)","B. &nbsp;Domain: \\(x \\in R, x &gt;0\\); &nbsp;Range: \\(y \\in R\\)","C. &nbsp;Domain: \\(x \\in R\\); &nbsp;Range: \\(y \\in R, y &gt; 0\\)","D. &nbsp;Domain: \\((0; \\infty)\\); &nbsp;Range: \\((- \\infty; \\infty)\\)"],"c":1},{"q":"<p><strong>Question 3<\/strong><\/p><p>If the inverse of a function is \\(f^{-1}(x) = \\log_{3}{x}\\), is the function \\(f(x)\\) a horizontal, a vertical, a decreasing, or an increasing function?<\/p>","a":["A. &nbsp;\\(f(x)\\) is a decreasing function.","B. &nbsp;\\(f(x)\\) is a horizontal function parallel to the \\(x\\)-axis.","C. &nbsp;\\(f(x)\\) is an increasing function","D. &nbsp;\\(f(x)\\) is a vertical function parallel to the \\(y\\)-axis."],"c":2},{"q":"<p><strong>Question 4<\/strong><\/p><p>A function is defined by \\(f(x) = a^x\\), \\(a&gt;0, a \\neq 1\\). Which of the following are the properties of the function?<\/p>","a":["A. &nbsp;The \\(y\\)-intercept is (0; 1) and the asymptote is \\(y = 0\\).","B. &nbsp;The \\(y\\)-intercept is (1; 0) and the asymptote is \\(x = 0\\).","C. &nbsp;The turning point is (1; 1) and the axis of symmetry is \\(y = x\\).","D. &nbsp;The turning point is (-1; -1) and the axis of symmetry is \\(y = -x\\)."],"c":0},{"q":"<p><strong>Question 5<\/strong><\/p><p>Which function and its inverse are shown in the graph?<\/p>","a":["A. &nbsp;\\(f(x) = 5^x\\); &nbsp;\\(f^{-1}(x) = x^5\\)","B. &nbsp;\\(f(x) = 5^x\\); &nbsp;\\(f^{-1}(x) = log_{5}{x}\\)","C. &nbsp;\\(f(x) = 5^{-x}\\); &nbsp;\\(f^{-1}(x) = log_{5}{(-x)}\\)","D. &nbsp;\\(f(x) = 5^{-x}\\); &nbsp;\\(f^{-1}(x) = x^{-5}\\)"],"c":1,"img":"data:image/jpeg;base64,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"}]};
+
+const app = document.getElementById('app');
+const N = QUIZ.questions.length;
+let cur = 0, chosen = [], checked = [], shown = [];
+function reset(){ chosen = Array(N).fill(null); checked = Array(N).fill(false); shown = Array(N).fill(false); }
+reset();
+
+function fitHints(){ app.querySelectorAll('.q-media').forEach(m=>{ const h=m.nextElementSibling; if(!h||!h.classList.contains('scroll-hint')) return; const upd=()=>{ h.hidden = !(m.scrollWidth > m.clientWidth + 2) || (m.scrollLeft + m.clientWidth >= m.scrollWidth - 2); }; upd(); m.onscroll=upd; }); }
+window.addEventListener('resize', fitHints);
+function typeset(){ fitHints(); if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([app]).then(fitHints).catch(()=>{}); }
+
+function intro(){
+  app.innerHTML = `<h1>${QUIZ.title}</h1><div class="q-text">${QUIZ.intro}</div>
+    <div class="row"><button class="btn" id="start">Start Quiz</button></div>`;
+  document.getElementById('start').onclick = () => { cur = 0; question(); };
+}
+
+function question(){
+  const Q = QUIZ.questions[cur], done = checked[cur] || shown[cur];
+  const dots = QUIZ.questions.map((_,i)=>`<button class="dot ${i===cur?'now':(chosen[i]!==null?'done':'')}" data-i="${i}" aria-label="Question ${i+1}"></button>`).join('');
+  const answers = Q.a.map((t,i)=>{
+    let cls = 'ans' + (done ? ' locked' : '');
+    if (done && i===Q.c && (shown[cur] || chosen[cur]===i)) cls += ' correct';
+    if (done && chosen[cur]===i && i!==Q.c) cls += ' wrong';
+    return `<label class="${cls}"><input type="radio" name="a" id="q${cur}a${i}" value="${i}" ${chosen[cur]===i?'checked':''} ${done?'disabled':''}><span>${t}</span></label>`;
+  }).join('');
+  let fb = '';
+  if (checked[cur]) fb = chosen[cur]===Q.c ? `<div class="feedback good">Correct. You got 1 out of 1 point.</div>` : `<div class="feedback bad">Not correct. You got 0 out of 1 point.</div>`;
+  app.innerHTML = `<div class="dots">${dots}</div>
+    ${Q.img ? `<div class="q-img"><img src="${Q.img}" alt="Diagram for this question"></div>` : ''}
+    ${Q.media ? `<div class="q-media">${Q.media}</div><div class="scroll-hint" hidden>Scroll the table sideways to see all of it <span class="arr" aria-hidden="true">&#10140;</span></div>` : ''}
+    <div class="q-text">${Q.q}</div>
+    <div class="answers">${answers}</div>
+    ${fb}
+    <div class="row">
+      ${!done ? `<button class="btn" id="check" ${chosen[cur]===null?'disabled':''}>Check</button>` : ''}
+      ${checked[cur] && chosen[cur]!==Q.c && !shown[cur] ? `<button class="btn ghost" id="sol">Show solution</button>` : ''}
+      ${checked[cur] ? `<button class="btn ghost" id="retry">Retry</button>` : ''}
+      <span class="spacer"></span>
+      <button class="btn ghost" id="prev" ${cur===0?'disabled':''}>Previous</button>
+      ${cur<N-1 ? `<button class="btn" id="next">Next</button>` : `<button class="btn" id="finish">Finish</button>`}
+    </div>`;
+  app.querySelectorAll('input[name=a]').forEach(r => r.onchange = () => { chosen[cur] = +r.value; question(); });
+  app.querySelectorAll('.dot').forEach(d => d.onclick = () => { cur = +d.dataset.i; question(); });
+  const on = (id,f)=>{ const el=document.getElementById(id); if(el) el.onclick=f; };
+  on('check', () => { checked[cur] = true; question(); });
+  on('sol', () => { shown[cur] = true; question(); });
+  on('retry', () => { chosen[cur]=null; checked[cur]=false; shown[cur]=false; question(); });
+  on('prev', () => { cur--; question(); });
+  on('next', () => { cur++; question(); });
+  on('finish', results);
+  typeset();
+}
+
+function results(){
+  const score = QUIZ.questions.reduce((s,Q,i)=> s + (chosen[i]===Q.c ? 1 : 0), 0);
+  const pct = Math.round(score/N*100);
+  app.innerHTML = `<h1>Your result</h1>
+    <div class="score">${score} / ${N}</div>
+    <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+    <p>You got ${score} out of ${N} points.</p>
+    <p class="feedback ${pct>=QUIZ.pass?'good':'bad'}">${pct>=QUIZ.pass ? 'Well done. You have passed this quiz.' : 'Watch the lesson again, then try once more. You need ' + QUIZ.pass + '% to pass.'}</p>
+    <div class="row"><button class="btn ghost" id="solutions">Show solutions</button><button class="btn" id="again">Retry</button></div>`;
+  document.getElementById('solutions').onclick = () => { for(let i=0;i<N;i++){ checked[i]=chosen[i]!==null; shown[i]=true; } cur=0; question(); };
+  document.getElementById('again').onclick = () => { reset(); intro(); };
+}
+
+intro();
+</script>
+
+</body>
+</html>
