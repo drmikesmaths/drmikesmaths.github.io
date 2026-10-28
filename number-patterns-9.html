@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+<title>Number Patterns 9 Quiz</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: one centred quiz card on a pale blue page, navy header band, one question at a time */
+:root{
+  --navy:#0B1259; --pale:#EAF2FB; --card:#FFFFFF; --ink:#1A2140; --muted:#5A6385;
+  --line:#C9D6EA; --good:#1E7B3A; --good-bg:#E5F4EA; --bad:#B3261E; --bad-bg:#FBE9E7;
+  --btn-fg:#FFFFFF;
+  --font:'Source Sans 3', 'Segoe UI', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --navy:#9FB4FF; --pale:#0E1330; --card:#171D3D; --ink:#E6EAF7; --muted:#A3ABC9;
+  --line:#2C3563; --good:#7FD69A; --good-bg:#16301F; --bad:#FF9C92; --bad-bg:#3A1A18;
+  --btn-fg:#0B1259; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --navy:#9FB4FF; --pale:#0E1330; --card:#171D3D; --ink:#E6EAF7; --muted:#A3ABC9;
+  --line:#2C3563; --good:#7FD69A; --good-bg:#16301F; --bad:#FF9C92; --bad-bg:#3A1A18;
+  --btn-fg:#0B1259; color-scheme:dark }
+body{ background:var(--pale); color:var(--ink); font-family:var(--font); font-size:18px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); padding-block:24px; }
+.wrap{ max-width:720px; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
+.brand{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; color:var(--navy); }
+.brand b{ font-size:20px; letter-spacing:.02em; }
+.brand span{ font-size:15px; color:var(--muted); }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:28px; display:flex; flex-direction:column; gap:18px; }
+h1{ margin:0; color:var(--navy); font-size:30px; line-height:1.2; text-wrap:balance; }
+.q-text p{ margin:0 0 10px; } .q-text p:last-child{ margin:0; }
+.q-media{ overflow-x:auto; }
+table.vt{ border-collapse:collapse; font-size:20px; font-variant-numeric:tabular-nums; margin:0 auto; }
+table.vt th, table.vt td{ border:1.5px solid var(--ink); padding:6px 14px; text-align:center; min-width:44px; }
+.scroll-hint{ display:flex; justify-content:center; align-items:center; gap:8px; font-weight:700; color:var(--navy); font-size:16px; margin-top:-8px; }
+.scroll-hint span.arr{ font-size:22px; animation:nudge 1.2s ease-in-out infinite; }
+@keyframes nudge{ 50%{ transform:translateX(6px); } }
+@media (prefers-reduced-motion: reduce){ .scroll-hint span.arr{ animation:none; } }
+@media (max-width:480px){ .card{ padding:20px 16px; } table.vt{ font-size:17px; } table.vt th, table.vt td{ padding:5px 7px; min-width:30px; } }
+table.vt th{ background:var(--pale); }
+.q-img{ display:flex; justify-content:center; } .q-img img{ background:#fff; padding:6px; border-radius:6px; max-width:100%; height:auto; }
+.answers{ display:flex; flex-direction:column; gap:10px; }
+.ans{ display:flex; align-items:center; gap:12px; padding:12px 16px; border:2px solid var(--line); border-radius:10px; cursor:pointer; }
+.ans:hover{ border-color:var(--navy); }
+.ans input{ width:20px; height:20px; accent-color:var(--navy); flex:none; }
+.ans.correct{ border-color:var(--good); background:var(--good-bg); }
+.ans.wrong{ border-color:var(--bad); background:var(--bad-bg); }
+.ans.locked{ cursor:default; }
+.dots{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.dot{ width:14px; height:14px; border-radius:50%; border:2px solid var(--navy); background:transparent; padding:0; cursor:pointer; }
+.dot.done{ background:var(--line); } .dot.now{ background:var(--navy); }
+.row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.row .spacer{ flex:1; }
+button.btn{ font:inherit; font-weight:700; font-size:16px; padding:10px 22px; border-radius:30px; border:2px solid var(--navy); background:var(--navy); color:var(--btn-fg); cursor:pointer; }
+button.btn.ghost{ background:transparent; color:var(--navy); }
+button.btn:disabled{ opacity:.4; cursor:default; }
+button:focus-visible{ outline:3px solid var(--navy); outline-offset:3px; }
+.feedback{ font-weight:700; } .feedback.good{ color:var(--good); } .feedback.bad{ color:var(--bad); }
+.score{ font-size:40px; font-weight:700; color:var(--navy); font-variant-numeric:tabular-nums; }
+.bar{ height:14px; background:var(--line); border-radius:7px; overflow:hidden; }
+.bar i{ display:block; height:100%; background:var(--navy); }
+.small{ font-size:15px; color:var(--muted); }
+mjx-container{ font-size:105% !important; }
+.q-img button.zoom{ border:0; background:none; padding:0; cursor:zoom-in; display:block; max-width:100%; }
+.zoom-hint{ text-align:center; font-size:15px; color:var(--muted); margin-top:-10px; }
+.lightbox{ position:fixed; inset:0; z-index:50; background:rgba(10,14,40,.94); display:flex; flex-direction:column; align-items:center; gap:12px; padding:calc(16px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left,0px)); }
+.lightbox .close{ align-self:flex-end; background:#FFFFFF; color:#0B1259; border-color:#FFFFFF; }
+.lb-scroll{ overflow:auto; max-width:100%; flex:1; min-height:0; }
+.lb-scroll img{ display:block; max-width:none; height:auto; background:#FFFFFF; border-radius:6px; padding:8px; }
+.lb-tip{ color:#FFFFFF; font-size:15px; text-align:center; }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <div class="brand"><b>Dr Mike's Maths</b><span>Grade 12 · Number Patterns 9</span></div>
+  <main class="card" id="app" aria-live="polite"></main>
+  <p class="small">Each question has one correct answer. Choose your answer, then press <b>Check</b>.</p>
+</div>
+
+<script>
+window.MathJax = { tex:{ inlineMath:[['\\(','\\)']] }, svg:{ fontCache:'global' }, startup:{ typeset:false } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<script>
+
+const QUIZ = {"title":"Number Patterns 9 Quiz","intro":"<p>This Quiz covers the material in Number Patterns 9. There are 5 questions and no time limit.<\/p>","pass":80,"questions":[{"q":"<p><strong>Question 1<\/strong><\/p><p>The sum of the first \\(n\\) terms of the geometric series -2 + 6 - 18 + . . . is -122.<\/p><p>What is the value of \\(n\\)?<\/p>","a":["A. &nbsp;5","B. &nbsp;6","C. &nbsp;7","D. &nbsp;8"],"c":0},{"q":"<p><strong>Question 2<\/strong><\/p><p>Determine the sum to 6 terms of the geometric series \\(4a + 8a + 16a + &nbsp;. . .\\)<\/p>","a":["A. &nbsp;\\(32a\\)","B. &nbsp;\\(64a\\)","C. &nbsp;\\(128a\\)","D. &nbsp;\\(252a\\)"],"c":3},{"q":"<p><strong>Question 3<\/strong><\/p><p>The sum of the first four terms of a geometric series is 10 and the common ratio is \\(\\tfrac{1}{3}\\).<\/p><p>What is the first term?<\/p>","a":["A. &nbsp;6","B. &nbsp;6\\(\\tfrac{3}{4}\\)","C. &nbsp;7","D. &nbsp;7\\(\\tfrac{3}{11}\\)"],"c":1},{"q":"<p><strong>Question 4<\/strong><\/p><p>The first term of a geometric series is 27, the last term is 8 and the sum of the series is 65.<\/p><p>How many terms are there in the series?<\/p>","a":["A. &nbsp;4","B. &nbsp;5","C. &nbsp;6","D. &nbsp;7"],"c":0},{"q":"<p><strong>Question 5<\/strong><\/p><p>Which term of the geometric series 1 + 2 + 4 + 8 + . . . will be the first to be greater than 1000?<\/p>","a":["A. &nbsp;9th term","B. &nbsp;10th term","C. &nbsp;11th term","D. &nbsp;12th term"],"c":2}]};
+
+const app = document.getElementById('app');
+const N = QUIZ.questions.length;
+let cur = 0, chosen = [], checked = [], shown = [];
+function reset(){ chosen = Array(N).fill(null); checked = Array(N).fill(false); shown = Array(N).fill(false); }
+reset();
+
+function fitHints(){ app.querySelectorAll('.q-media').forEach(m=>{ const h=m.nextElementSibling; if(!h||!h.classList.contains('scroll-hint')) return; const upd=()=>{ h.hidden = !(m.scrollWidth > m.clientWidth + 2) || (m.scrollLeft + m.clientWidth >= m.scrollWidth - 2); }; upd(); m.onscroll=upd; }); }
+window.addEventListener('resize', fitHints);
+function typeset(){ fitHints(); if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([app]).then(fitHints).catch(()=>{}); }
+
+function intro(){
+  app.innerHTML = `<h1>${QUIZ.title}</h1><div class="q-text">${QUIZ.intro}</div>
+    <div class="row"><button class="btn" id="start">Start Quiz</button></div>`;
+  document.getElementById('start').onclick = () => { cur = 0; question(); };
+}
+
+function question(){
+  const Q = QUIZ.questions[cur], done = checked[cur] || shown[cur];
+  const dots = QUIZ.questions.map((_,i)=>`<button class="dot ${i===cur?'now':(chosen[i]!==null?'done':'')}" data-i="${i}" aria-label="Question ${i+1}"></button>`).join('');
+  const answers = Q.a.map((t,i)=>{
+    let cls = 'ans' + (done ? ' locked' : '');
+    if (done && i===Q.c && (shown[cur] || chosen[cur]===i)) cls += ' correct';
+    if (done && chosen[cur]===i && i!==Q.c) cls += ' wrong';
+    return `<label class="${cls}"><input type="radio" name="a" id="q${cur}a${i}" value="${i}" ${chosen[cur]===i?'checked':''} ${done?'disabled':''}><span>${t}</span></label>`;
+  }).join('');
+  let fb = '';
+  if (checked[cur]) fb = chosen[cur]===Q.c ? `<div class="feedback good">Correct. You got 1 out of 1 point.</div>` : `<div class="feedback bad">Not correct. You got 0 out of 1 point.</div>`;
+  app.innerHTML = `<div class="dots">${dots}</div>
+    ${Q.img ? `<div class="q-img"><button type="button" class="zoom" aria-label="Enlarge the picture"><img src="${Q.img}" alt="Diagram for this question"></button></div><div class="zoom-hint">Tap the picture to enlarge it</div>` : ''}
+    ${Q.media ? `<div class="q-media">${Q.media}</div><div class="scroll-hint" hidden>Scroll the table sideways to see all of it <span class="arr" aria-hidden="true">&#10140;</span></div>` : ''}
+    <div class="q-text">${Q.q}</div>
+    <div class="answers">${answers}</div>
+    ${fb}
+    <div class="row">
+      ${!done ? `<button class="btn" id="check" ${chosen[cur]===null?'disabled':''}>Check</button>` : ''}
+      ${checked[cur] && chosen[cur]!==Q.c && !shown[cur] ? `<button class="btn ghost" id="sol">Show solution</button>` : ''}
+      ${checked[cur] ? `<button class="btn ghost" id="retry">Retry</button>` : ''}
+      <span class="spacer"></span>
+      <button class="btn ghost" id="prev" ${cur===0?'disabled':''}>Previous</button>
+      ${cur<N-1 ? `<button class="btn" id="next">Next</button>` : `<button class="btn" id="finish">Finish</button>`}
+    </div>`;
+  app.querySelectorAll('input[name=a]').forEach(r => r.onchange = () => { chosen[cur] = +r.value; question(); });
+  app.querySelectorAll('.dot').forEach(d => d.onclick = () => { cur = +d.dataset.i; question(); });
+  const on = (id,f)=>{ const el=document.getElementById(id); if(el) el.onclick=f; };
+  on('check', () => { checked[cur] = true; question(); });
+  on('sol', () => { shown[cur] = true; question(); });
+  on('retry', () => { chosen[cur]=null; checked[cur]=false; shown[cur]=false; question(); });
+  on('prev', () => { cur--; question(); });
+  on('next', () => { cur++; question(); });
+  on('finish', results);
+  app.querySelectorAll('.zoom').forEach(b => b.onclick = () => openZoom(b.querySelector('img')));
+  typeset();
+}
+
+function openZoom(src){
+  const d = document.createElement('div'); d.className = 'lightbox'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Enlarged picture');
+  d.innerHTML = '<button type="button" class="btn close">Close</button><div class="lb-scroll"><img alt="Enlarged picture"></div><div class="lb-tip" hidden>Slide the picture sideways to see all of it</div>';
+  const im = d.querySelector('.lb-scroll img'); im.src = src.src;
+  const nat = src.naturalWidth || 900;
+  const fit = () => { const room = window.innerWidth - 48; im.style.width = Math.max(nat, Math.min(room, nat*2)) + 'px'; d.querySelector('.lb-tip').hidden = !(im.offsetWidth > d.querySelector('.lb-scroll').clientWidth + 2); };
+  const shut = () => { d.remove(); document.removeEventListener('keydown', esc); window.removeEventListener('resize', fit); };
+  const esc = e => { if (e.key === 'Escape') shut(); };
+  d.querySelector('.close').onclick = shut; d.onclick = e => { if (e.target === d) shut(); };
+  document.addEventListener('keydown', esc); window.addEventListener('resize', fit);
+  document.body.appendChild(d); fit(); d.querySelector('.close').focus();
+}
+
+function results(){
+  const score = QUIZ.questions.reduce((s,Q,i)=> s + (chosen[i]===Q.c ? 1 : 0), 0);
+  const pct = Math.round(score/N*100);
+  app.innerHTML = `<h1>Your result</h1>
+    <div class="score">${score} / ${N}</div>
+    <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+    <p>You got ${score} out of ${N} points.</p>
+    <p class="feedback ${pct>=QUIZ.pass?'good':'bad'}">${pct>=QUIZ.pass ? 'Well done. You have passed this quiz.' : 'Watch the lesson again, then try once more. You need ' + QUIZ.pass + '% to pass.'}</p>
+    <div class="row"><button class="btn ghost" id="solutions">Show solutions</button><button class="btn" id="again">Retry</button></div>`;
+  document.getElementById('solutions').onclick = () => { for(let i=0;i<N;i++){ checked[i]=chosen[i]!==null; shown[i]=true; } cur=0; question(); };
+  document.getElementById('again').onclick = () => { reset(); intro(); };
+}
+
+intro();
+</script>
+
+</body>
+</html>
