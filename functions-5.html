@@ -63,6 +63,13 @@ button:focus-visible{ outline:3px solid var(--navy); outline-offset:3px; }
 .bar i{ display:block; height:100%; background:var(--navy); }
 .small{ font-size:15px; color:var(--muted); }
 mjx-container{ font-size:105% !important; }
+.q-img button.zoom{ border:0; background:none; padding:0; cursor:zoom-in; display:block; max-width:100%; }
+.zoom-hint{ text-align:center; font-size:15px; color:var(--muted); margin-top:-10px; }
+.lightbox{ position:fixed; inset:0; z-index:50; background:rgba(10,14,40,.94); display:flex; flex-direction:column; align-items:center; gap:12px; padding:calc(16px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left,0px)); }
+.lightbox .close{ align-self:flex-end; background:#FFFFFF; color:#0B1259; border-color:#FFFFFF; }
+.lb-scroll{ overflow:auto; max-width:100%; flex:1; min-height:0; }
+.lb-scroll img{ display:block; max-width:none; height:auto; background:#FFFFFF; border-radius:6px; padding:8px; }
+.lb-tip{ color:#FFFFFF; font-size:15px; text-align:center; }
 </style>
 </head>
 <body>
@@ -110,7 +117,7 @@ function question(){
   let fb = '';
   if (checked[cur]) fb = chosen[cur]===Q.c ? `<div class="feedback good">Correct. You got 1 out of 1 point.</div>` : `<div class="feedback bad">Not correct. You got 0 out of 1 point.</div>`;
   app.innerHTML = `<div class="dots">${dots}</div>
-    ${Q.img ? `<div class="q-img"><img src="${Q.img}" alt="Diagram for this question"></div>` : ''}
+    ${Q.img ? `<div class="q-img"><button type="button" class="zoom" aria-label="Enlarge the picture"><img src="${Q.img}" alt="Diagram for this question"></button></div><div class="zoom-hint">Tap the picture to enlarge it</div>` : ''}
     ${Q.media ? `<div class="q-media">${Q.media}</div><div class="scroll-hint" hidden>Scroll the table sideways to see all of it <span class="arr" aria-hidden="true">&#10140;</span></div>` : ''}
     <div class="q-text">${Q.q}</div>
     <div class="answers">${answers}</div>
@@ -132,7 +139,21 @@ function question(){
   on('prev', () => { cur--; question(); });
   on('next', () => { cur++; question(); });
   on('finish', results);
+  app.querySelectorAll('.zoom').forEach(b => b.onclick = () => openZoom(b.querySelector('img')));
   typeset();
+}
+
+function openZoom(src){
+  const d = document.createElement('div'); d.className = 'lightbox'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Enlarged picture');
+  d.innerHTML = '<button type="button" class="btn close">Close</button><div class="lb-scroll"><img alt="Enlarged picture"></div><div class="lb-tip" hidden>Slide the picture sideways to see all of it</div>';
+  const im = d.querySelector('.lb-scroll img'); im.src = src.src;
+  const nat = src.naturalWidth || 900;
+  const fit = () => { const room = window.innerWidth - 48; im.style.width = Math.max(nat, Math.min(room, nat*2)) + 'px'; d.querySelector('.lb-tip').hidden = !(im.offsetWidth > d.querySelector('.lb-scroll').clientWidth + 2); };
+  const shut = () => { d.remove(); document.removeEventListener('keydown', esc); window.removeEventListener('resize', fit); };
+  const esc = e => { if (e.key === 'Escape') shut(); };
+  d.querySelector('.close').onclick = shut; d.onclick = e => { if (e.target === d) shut(); };
+  document.addEventListener('keydown', esc); window.addEventListener('resize', fit);
+  document.body.appendChild(d); fit(); d.querySelector('.close').focus();
 }
 
 function results(){
