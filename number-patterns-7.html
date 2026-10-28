@@ -90,6 +90,9 @@ window.MathJax = { tex:{ inlineMath:[['\\(','\\)']] }, svg:{ fontCache:'global' 
 const QUIZ = {"title":"Number Patterns 7 Quiz","intro":"<p>This Quiz covers the material in Number Patterns 7. There are 5 questions and no time limit.<\/p>","pass":80,"questions":[{"q":"<p><strong>Question 1<\/strong><\/p><p>The arithmetic series 3 - 1 - 5 - . . . has \\(S_{n} = -150\\).<\/p><p>What is the value of \\(n\\)?<\/p>","a":["A. &nbsp;-10","B. &nbsp;10","C. &nbsp;\\(\\frac{15}{2}\\)","D. &nbsp;\\(-\\frac{15}{2}\\)"],"c":1},{"q":"<p><strong>Question 2<\/strong><\/p><p>Evaluate the arithmetic series \\(11x + 9x + 7x + . . .\\) to 14 terms.<\/p>","a":["A. &nbsp;\\(-28x\\)","B. &nbsp;-28","C. &nbsp;28","D. &nbsp;\\(28x\\)"],"c":0},{"q":"<p><strong>Question 3<\/strong><\/p><p>What is the sum of the series: 4 + 9 + 14 + . . . + 54?<\/p>","a":["A. &nbsp;58","B. &nbsp;79","C. &nbsp;319","D. &nbsp;638"],"c":2},{"q":"<p><strong>Question 4<\/strong><\/p><p>The first three terms of an arithmetic series are \\(t - 2\\), \\(2t - 6\\) and \\(4t - 8\\).<\/p><p>What is the value of \\(t\\)?<\/p>","a":["A. &nbsp;-8","B. &nbsp;-6","C. &nbsp;-4","D. &nbsp;-2"],"c":3},{"q":"<p><strong>Question 5<\/strong><\/p><p>What is the greatest number of terms for which \\(\\sum_{r=1}^{n} (2r - 10)\\) will have a value less than 22?<\/p>","a":["A. &nbsp;9","B. &nbsp;10","C. &nbsp;11","D. &nbsp;12"],"c":1}]};
 
 const app = document.getElementById('app');
+/* Full-size stacked fractions, as in MathType (\\tfrac stays small where chosen) */
+const DS = s => s.replace(/\\\(/g, '\\(\\displaystyle ');
+QUIZ.questions.forEach(q => { q.q = DS(q.q); q.a = q.a.map(DS); if (q.media) q.media = DS(q.media); });
 const N = QUIZ.questions.length;
 let cur = 0, chosen = [], checked = [], shown = [];
 function reset(){ chosen = Array(N).fill(null); checked = Array(N).fill(false); shown = Array(N).fill(false); }
