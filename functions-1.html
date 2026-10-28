@@ -101,6 +101,9 @@ const QUIZ = {
 };
 
 const app = document.getElementById('app');
+/* Full-size stacked fractions, as in MathType (\\tfrac stays small where chosen) */
+const DS = s => s.replace(/\\\(/g, '\\(\\displaystyle ');
+QUIZ.questions.forEach(q => { q.q = DS(q.q); q.a = q.a.map(DS); if (q.media) q.media = DS(q.media); });
 const N = QUIZ.questions.length;
 let cur = 0, chosen = [], checked = [], shown = [];
 function reset(){ chosen = Array(N).fill(null); checked = Array(N).fill(false); shown = Array(N).fill(false); }
