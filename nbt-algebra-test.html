@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NBT Algebra Test</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: one centred test card on a pale blue page, with a sticky navy timer bar */
+:root{
+  --navy:#0B1259; --pale:#EAF2FB; --card:#FFFFFF; --ink:#1A2140; --muted:#5A6385;
+  --line:#C9D6EA; --good:#1E7B3A; --good-bg:#E5F4EA; --bad:#B3261E; --bad-bg:#FBE9E7;
+  --btn-fg:#FFFFFF; --on-bad:#FFFFFF; --pick-bg:#E3EAF8;
+  --font:'Source Sans 3', 'Segoe UI', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --navy:#9FB4FF; --pale:#0E1330; --card:#171D3D; --ink:#E6EAF7; --muted:#A3ABC9;
+  --line:#2C3563; --good:#7FD69A; --good-bg:#16301F; --bad:#FF9C92; --bad-bg:#3A1A18;
+  --btn-fg:#0B1259; --on-bad:#3A1A18; --pick-bg:#232C5A; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --navy:#9FB4FF; --pale:#0E1330; --card:#171D3D; --ink:#E6EAF7; --muted:#A3ABC9;
+  --line:#2C3563; --good:#7FD69A; --good-bg:#16301F; --bad:#FF9C92; --bad-bg:#3A1A18;
+  --btn-fg:#0B1259; --on-bad:#3A1A18; --pick-bg:#232C5A; color-scheme:dark }
+body{ margin:0; background:var(--pale); color:var(--ink); font-family:var(--font); font-size:18px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); padding-block:24px; }
+.wrap{ max-width:720px; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
+.brand{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; color:var(--navy); }
+.brand b{ font-size:20px; letter-spacing:.02em; }
+.brand span{ font-size:15px; color:var(--muted); }
+.timerbar{ position:sticky; top:calc(8px + env(safe-area-inset-top,0px)); z-index:5; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+  background:var(--navy); color:var(--btn-fg); border-radius:12px; padding:10px 18px; font-variant-numeric:tabular-nums; }
+.timerbar strong{ font-size:26px; letter-spacing:.03em; margin-left:6px; }
+.timerbar.low{ background:var(--bad); color:var(--on-bad); }
+.warnmsg{ background:var(--bad-bg); color:var(--bad); border:2px solid var(--bad); border-radius:10px; padding:10px 16px; font-weight:700; }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:28px; display:flex; flex-direction:column; gap:18px; }
+h1{ margin:0; color:var(--navy); font-size:30px; line-height:1.2; text-wrap:balance; }
+.rules{ margin:0; padding-left:22px; display:flex; flex-direction:column; gap:6px; }
+.qnum{ font-size:15px; color:var(--muted); font-weight:600; }
+.q-text{ overflow-x:auto; overflow-y:hidden; }
+.q-text p{ margin:0 0 10px; } .q-text p:last-child{ margin:0; }
+.q-img{ display:flex; justify-content:center; }
+.q-img button.zoom{ border:0; background:none; padding:0; cursor:zoom-in; display:block; max-width:100%; }
+.q-img img{ background:#FFFFFF; padding:6px; border-radius:6px; max-width:100%; height:auto; display:block; }
+.zoom-hint{ text-align:center; font-size:15px; color:var(--muted); margin-top:-10px; }
+.answers{ display:flex; flex-direction:column; gap:10px; }
+.ans{ display:flex; align-items:center; gap:12px; padding:12px 16px; border:2px solid var(--line); border-radius:10px; cursor:pointer; }
+.ans:hover{ border-color:var(--navy); }
+.ans.picked{ border-color:var(--navy); background:var(--pick-bg); }
+.ans.correct{ border-color:var(--good); background:var(--good-bg); }
+.ans.wrong{ border-color:var(--bad); background:var(--bad-bg); }
+.ans.locked{ cursor:default; }
+.ans input{ width:20px; height:20px; accent-color:var(--navy); flex:none; }
+.ans > span{ min-width:0; overflow-x:auto; overflow-y:hidden; }
+.dots{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.dot{ width:16px; height:16px; border-radius:50%; border:2px solid var(--navy); background:transparent; padding:0; cursor:pointer; }
+.dot.done{ background:var(--line); } .dot.now{ background:var(--navy); }
+.row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.row .spacer{ flex:1; }
+button.btn{ font:inherit; font-weight:700; font-size:16px; padding:10px 22px; border-radius:30px; border:2px solid var(--navy); background:var(--navy); color:var(--btn-fg); cursor:pointer; }
+button.btn.ghost{ background:transparent; color:var(--navy); }
+button.btn:disabled{ opacity:.4; cursor:default; }
+button:focus-visible{ outline:3px solid var(--navy); outline-offset:3px; }
+.confirm{ border:2px solid var(--navy); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:12px; background:var(--pick-bg); }
+.confirm p{ margin:0; font-weight:600; }
+.score{ font-size:40px; font-weight:700; color:var(--navy); font-variant-numeric:tabular-nums; }
+.bar{ height:14px; background:var(--line); border-radius:7px; overflow:hidden; }
+.bar i{ display:block; height:100%; background:var(--navy); }
+.review{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:8px; }
+.rv{ font:inherit; font-size:16px; text-align:left; display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; border:2px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+.rv:hover{ border-color:var(--navy); }
+.pill{ font-size:13px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; }
+.pill.ok{ color:var(--good); background:var(--good-bg); }
+.pill.no{ color:var(--bad); background:var(--bad-bg); }
+.pill.skip{ color:var(--muted); background:var(--pale); }
+.small{ font-size:15px; color:var(--muted); margin:0; }
+.lightbox{ position:fixed; inset:0; z-index:50; background:rgba(10,14,40,.94); display:flex; flex-direction:column; align-items:center; gap:12px; padding:calc(16px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left,0px)); }
+.lightbox .close{ align-self:flex-end; background:#FFFFFF; color:#0B1259; border-color:#FFFFFF; }
+.lb-scroll{ overflow:auto; max-width:100%; flex:1; min-height:0; }
+.lb-scroll img{ display:block; max-width:none; height:auto; background:#FFFFFF; border-radius:6px; padding:8px; }
+.lb-tip{ color:#FFFFFF; font-size:15px; text-align:center; }
+@media (max-width:480px){ .card{ padding:20px 16px; } .timerbar strong{ font-size:22px; } }
+mjx-container{ font-size:105% !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><b>Dr Mike's Maths</b><span>NBT MAT · 15-minute test</span></div>
+  <div class="timerbar" id="bar" hidden><span>Time left <strong id="clock">--:--</strong></span><span id="count"></span></div>
+  <div class="warnmsg" id="warn" role="alert" hidden>5 minutes left. Check any questions you have not answered yet.</div>
+  <main class="card" id="app" aria-live="polite"></main>
+  <p class="small">Each question has four answers, but only one is correct.</p>
+</div>
+
+<script>
+window.MathJax = { tex:{ inlineMath:[['\\(','\\)']] }, svg:{ fontCache:'global' }, startup:{ typeset:false } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<script>
+const QUIZ = {"title":"NBT Algebra Test","minutes":15,"label":"15 minutes","questions":[{"q":"<p><strong>Question 1<\/strong><\/p><p>If the graph of <em>y<\/em> = <em>kx<\/em><sup>2<\/sup> + 3<em>x<\/em> - 2 does not cut or touch the <em>x<\/em>-axis, what are the values of<em> k<\/em>?<\/p>","a":["A. &nbsp;<em>k <\/em>&gt; \\(-\\frac{9}{8}\\)","B.&nbsp;<em> k <\/em>\\(\\geq -\\frac{9}{8}\\)","C.<em> &nbsp;k<\/em> \\(\\leq -\\frac{9}{8}\\)","D. &nbsp;<em>k<\/em> &lt; \\(-\\frac{9}{8}\\)"],"c":3},{"q":"<p><strong>Question 2<\/strong><\/p><p>How many values of <em>x<\/em> satisfy the equation \\(\\frac{2x^2-10x}{x^2-5x} = x - 3\\)?<\/p>","a":["A. &nbsp;0","B. &nbsp;1","C. &nbsp;3","D. &nbsp;4"],"c":0},{"q":"<p><strong>Question 3<\/strong><\/p><p>Which of the graphs represents the equation \\(2x + y = 0\\)?<\/p>","a":["Graph A","Graph B","Graph C","Graph D"],"c":2,"img":"data:image/jpeg;base64,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"},{"q":"<p><strong>Question 4<\/strong><\/p><p>The roots of the equation \\(\\left|x + a\\right| = b\\) are 2 and -1.<\/p><p>What is the value of <em>b<\/em>?<\/p>","a":["A. &nbsp;\\(10\\)","B. &nbsp;\\(\\frac{3}{2}\\)","C. &nbsp;\\(\\frac{1}{2}\\)","D. &nbsp;\\(-3\\)"],"c":1},{"q":"<p><strong>Question 5<\/strong><\/p><p>How many integers satisfy the equation \\((x^2 - 3x + 1)^{x + 1} = 1\\)?<\/p>","a":["A. &nbsp;1","B. &nbsp;2","C. &nbsp;3","D. &nbsp;4"],"c":3}]};
+
+const app = document.getElementById('app'), bar = document.getElementById('bar'), clock = document.getElementById('clock'), count = document.getElementById('count'), warn = document.getElementById('warn');
+const N = QUIZ.questions.length;
+const KEY = 'drmikesmaths:' + location.pathname;
+/* Full-size stacked fractions, as in MathType (\tfrac stays small where chosen) */
+const DS = s => s.replace(/\\\(/g, '\\(\\displaystyle ');
+QUIZ.questions.forEach(q => { q.q = DS(q.q); q.a = q.a.map(DS); });
+
+let st = null, tick = null, cur = 0;
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
+const clearSave = () => { try { localStorage.removeItem(KEY); } catch (e) {} };
+function loadSaved(){ try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.ans) && s.ans.length === N && !s.done) return s; } catch (e) {} return null; }
+
+const pad = n => String(n).padStart(2, '0');
+function fmt(ms){ const t = Math.max(0, Math.ceil(ms / 1000)); const h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), s = t % 60; return h ? h + ':' + pad(m) + ':' + pad(s) : pad(m) + ':' + pad(s); }
+const answered = () => st.ans.filter(x => x !== null).length;
+
+function typeset(){ if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([app]).catch(() => {}); }
+
+function intro(){
+  bar.hidden = true; warn.hidden = true;
+  app.innerHTML = `<h1>${QUIZ.title}</h1>
+    <p>This test has ${N} questions and you have <b>${QUIZ.label}</b> to complete it.</p>
+    <ul class="rules">
+      <li>Each question has four answers, but only one is correct.</li>
+      <li>You can move between the questions and change your answers until the time is up.</li>
+      <li>The timer starts when you press <b>Start Test</b>. When the time runs out, the test ends and your answers are marked.</li>
+      <li>At the end you will see your score and which questions you got wrong. The Test Review lessons in the NBT MAT course show how each question is solved.</li>
+    </ul>
+    <div class="row"><button class="btn" id="start">Start Test</button></div>`;
+  document.getElementById('start').onclick = () => { st = { start: Date.now(), end: Date.now() + QUIZ.minutes * 60000, ans: Array(N).fill(null), warned: false, done: false }; save(); run(); };
+}
+
+function run(){
+  bar.hidden = false; warn.hidden = !st.warned;
+  clearInterval(tick); tick = setInterval(update, 500); update();
+  if (!st.done) question();
+}
+
+function update(){
+  const left = st.end - Date.now();
+  clock.textContent = fmt(left);
+  count.textContent = 'Answered ' + answered() + ' of ' + N;
+  bar.classList.toggle('low', left <= 5 * 60000);
+  if (left <= 5 * 60000 && !st.warned){ st.warned = true; save(); warn.hidden = false; }
+  if (left <= 0) finish(true);
+}
+
+function question(){
+  const Q = QUIZ.questions[cur];
+  const dots = QUIZ.questions.map((_, i) => `<button class="dot ${i === cur ? 'now' : (st.ans[i] !== null ? 'done' : '')}" data-i="${i}" aria-label="Question ${i + 1}${st.ans[i] !== null ? ', answered' : ''}"></button>`).join('');
+  const answers = Q.a.map((t, i) => `<label class="ans ${st.ans[cur] === i ? 'picked' : ''}"><input type="radio" name="a" id="q${cur}a${i}" value="${i}" ${st.ans[cur] === i ? 'checked' : ''}><span>${t}</span></label>`).join('');
+  app.innerHTML = `<div class="dots">${dots}</div>
+    <div class="qnum">Question ${cur + 1} of ${N}</div>
+    ${Q.img ? `<div class="q-img"><button type="button" class="zoom" aria-label="Enlarge the picture"><img src="${Q.img}" alt="Diagram for this question"></button></div><div class="zoom-hint">Tap the picture to enlarge it</div>` : ''}
+    <div class="q-text">${Q.q}</div>
+    <div class="answers">${answers}</div>
+    <div class="row">
+      <button class="btn ghost" id="prev" ${cur === 0 ? 'disabled' : ''}>Previous</button>
+      ${cur < N - 1 ? `<button class="btn" id="next">Next</button>` : ''}
+      <span class="spacer"></span>
+      <button class="btn ${cur === N - 1 ? '' : 'ghost'}" id="finish">Finish Test</button>
+    </div>
+    <div id="confirm"></div>`;
+  app.querySelectorAll('input[name=a]').forEach(r => r.onchange = () => {
+    st.ans[cur] = +r.value; save(); update();
+    app.querySelectorAll('.ans').forEach((l, i) => l.classList.toggle('picked', i === st.ans[cur]));
+    const d = app.querySelectorAll('.dot')[cur]; d.setAttribute('aria-label', 'Question ' + (cur + 1) + ', answered');
+  });
+  app.querySelectorAll('.dot').forEach(d => d.onclick = () => { cur = +d.dataset.i; question(); });
+  app.querySelectorAll('.zoom').forEach(b => b.onclick = () => openZoom(b.querySelector('img')));
+  document.getElementById('prev').onclick = () => { cur--; question(); };
+  const nx = document.getElementById('next'); if (nx) nx.onclick = () => { cur++; question(); };
+  document.getElementById('finish').onclick = askFinish;
+  typeset();
+}
+
+function askFinish(){
+  const box = document.getElementById('confirm'); const a = answered();
+  box.innerHTML = `<div class="confirm"><p>You have answered ${a} of ${N} questions${a < N ? ' and still have time left' : ''}. Do you want to finish the test now?</p>
+    <div class="row"><button class="btn" id="yes">Yes, finish now</button><button class="btn ghost" id="no">Keep working</button></div></div>`;
+  document.getElementById('yes').onclick = () => finish(false);
+  document.getElementById('no').onclick = () => { box.innerHTML = ''; };
+  document.getElementById('yes').focus();
+}
+
+function finish(timeUp){
+  if (st.done) return;
+  clearInterval(tick); st.done = true; st.finished = Math.min(Date.now(), st.end); st.timeUp = timeUp;
+  bar.hidden = true; warn.hidden = true; clearSave();
+  results();
+}
+
+function results(){
+  const score = QUIZ.questions.reduce((s, Q, i) => s + (st.ans[i] === Q.c ? 1 : 0), 0);
+  const pct = Math.round(score / N * 100);
+  const rows = QUIZ.questions.map((Q, i) => { const a = st.ans[i]; const [cls, txt] = a === null ? ['skip', 'Not answered'] : a === Q.c ? ['ok', 'Correct'] : ['no', 'Not correct'];
+    return `<button class="rv" data-i="${i}"><span>Question ${i + 1}</span><span class="pill ${cls}">${txt}</span></button>`; }).join('');
+  app.innerHTML = `<h1>${st.timeUp ? 'Time is up' : 'Test finished'}</h1>
+    <div class="score">${score} / ${N}</div>
+    <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+    <p>You scored ${pct}%. You answered ${answered()} of ${N} questions in ${fmt(st.finished - st.start)}.</p>
+    <p class="small">Tap a question to look at it again with your answer.</p>
+    <div class="review">${rows}</div>
+    <p>The Test Review lessons in the NBT MAT course show how each question is solved.</p>`;
+  app.querySelectorAll('.rv').forEach(b => b.onclick = () => reviewQ(+b.dataset.i));
+}
+
+function reviewQ(i){
+  const Q = QUIZ.questions[i], a = st.ans[i];
+  const answers = Q.a.map((t, k) => { let cls = 'ans locked'; if (k === a) cls += (a === Q.c ? ' correct' : ' wrong');
+    return `<label class="${cls}"><input type="radio" disabled ${k === a ? 'checked' : ''}><span>${t}</span></label>`; }).join('');
+  const msg = a === null ? '<p class="small">You did not answer this question.</p>' : a === Q.c ? '<p class="small" style="color:var(--good);font-weight:700">Your answer is correct.</p>' : '<p class="small" style="color:var(--bad);font-weight:700">Your answer is not correct.</p>';
+  app.innerHTML = `<div class="qnum">Question ${i + 1} of ${N}</div>
+    ${Q.img ? `<div class="q-img"><button type="button" class="zoom" aria-label="Enlarge the picture"><img src="${Q.img}" alt="Diagram for this question"></button></div><div class="zoom-hint">Tap the picture to enlarge it</div>` : ''}
+    <div class="q-text">${Q.q}</div>
+    <div class="answers">${answers}</div>
+    ${msg}
+    <div class="row"><button class="btn ghost" id="pq" ${i === 0 ? 'disabled' : ''}>Previous</button><button class="btn ghost" id="nq" ${i === N - 1 ? 'disabled' : ''}>Next</button><span class="spacer"></span><button class="btn" id="back">Back to results</button></div>`;
+  app.querySelectorAll('.zoom').forEach(b => b.onclick = () => openZoom(b.querySelector('img')));
+  document.getElementById('pq').onclick = () => reviewQ(i - 1);
+  document.getElementById('nq').onclick = () => reviewQ(i + 1);
+  document.getElementById('back').onclick = results;
+  typeset();
+}
+
+function openZoom(src){
+  const d = document.createElement('div'); d.className = 'lightbox'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Enlarged picture');
+  d.innerHTML = '<button type="button" class="btn close">Close</button><div class="lb-scroll"><img alt="Enlarged picture"></div><div class="lb-tip" hidden>Slide the picture sideways to see all of it</div>';
+  const im = d.querySelector('.lb-scroll img'); im.src = src.src;
+  const nat = src.naturalWidth || 900;
+  const fit = () => { const room = window.innerWidth - 48; im.style.width = Math.max(nat, Math.min(room, nat * 2)) + 'px'; d.querySelector('.lb-tip').hidden = !(im.offsetWidth > d.querySelector('.lb-scroll').clientWidth + 2); };
+  const shut = () => { d.remove(); document.removeEventListener('keydown', esc); window.removeEventListener('resize', fit); };
+  const esc = e => { if (e.key === 'Escape') shut(); };
+  d.querySelector('.close').onclick = shut; d.onclick = e => { if (e.target === d) shut(); };
+  document.addEventListener('keydown', esc); window.addEventListener('resize', fit);
+  document.body.appendChild(d); fit(); d.querySelector('.close').focus();
+}
+
+/* If a learner reloads the page during a test, carry on where they left off with the same clock */
+st = loadSaved();
+if (st) { if (Date.now() >= st.end) { st.done = false; finish(true); } else run(); } else intro();
+</script>
+</body>
+</html>
